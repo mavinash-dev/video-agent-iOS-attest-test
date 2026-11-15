@@ -25,15 +25,26 @@ jobs:
           chmod +x ./build-xcframeworks.sh
           ./build-xcframeworks.sh
 
-      - name: Collect files and write checksums
+      - name: Collect files
+        id: collect
         run: |
           mkdir -p "$RUNNER_TEMP/release"
           cp xcframeworks.zip NewRelicVideoCore.xcframework.zip NRAVPlayerTracker.xcframework.zip NRIMATracker.xcframework.zip NRMediaTailorTracker.xcframework.zip NRTHEOplayerTracker.xcframework.zip "$RUNNER_TEMP/release/"
-          cd "$RUNNER_TEMP/release"
-          # Written outside the folder so the list does not list itself.
-          shasum -a 256 -- * > "$RUNNER_TEMP/SHA256SUMS"
-          mv "$RUNNER_TEMP/SHA256SUMS" SHA256SUMS
-          cat SHA256SUMS
+          { echo 'list<<EOF'; ls "$RUNNER_TEMP"/release/*; echo EOF; } >> "$GITHUB_OUTPUT"
+          echo "version=$(grep 's.version' NewRelicVideoAgent.podspec | sed -E "s/.*'([0-9]+\.[0-9]+\.[0-9]+)'.*/\1/")" >> "$GITHUB_OUTPUT"
+
+      - name: Integrity manifest
+        uses: mavinash-dev/video-core-js-provenance-check/.github/actions/integrity-manifest@378ab5ab740719e51aebe146424a8c4f4ea607a8
+        with:
+          name: video-agent-iOS
+          version: ${{ steps.collect.outputs.version }}
+          tag: v${{ steps.collect.outputs.version }}
+          commit: ${{ github.sha }}
+          files: ${{ steps.collect.outputs.list }}
+          output-dir: ${{ runner.temp }}/integrity
+
+      - name: Add the manifest files to the release folder
+        run: cp "$RUNNER_TEMP"/integrity/integrity-manifest.json "$RUNNER_TEMP"/integrity/SHA256SUMS "$RUNNER_TEMP/release/"
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
