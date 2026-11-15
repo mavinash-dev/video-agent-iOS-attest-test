@@ -1,0 +1,51 @@
+name: Attest test
+
+on:
+  push:
+    branches:
+      - attest-test
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and attest
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build XCFrameworks
+        run: |
+          chmod +x ./build-xcframeworks.sh
+          ./build-xcframeworks.sh
+
+      - name: Collect files and write manifest
+        env:
+          COMMIT: ${{ github.sha }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/release"
+          cp xcframeworks.zip NewRelicVideoCore.xcframework.zip NRAVPlayerTracker.xcframework.zip NRIMATracker.xcframework.zip NRMediaTailorTracker.xcframework.zip NRTHEOplayerTracker.xcframework.zip "$RUNNER_TEMP/release/"
+          cd "$RUNNER_TEMP/release"
+          for f in $(ls | sort); do
+            printf '{"name":"%s","size":%s,"sha256":"%s"}\n' "$f" "$(stat -f %z "$f")" "$(shasum -a 256 "$f" | cut -d' ' -f1)"
+          done | jq -s --arg c "$COMMIT" '{commit:$c,files:.}' > "$RUNNER_TEMP/manifest.json"
+          mv "$RUNNER_TEMP/manifest.json" manifest.json
+          cat manifest.json
+          ls -l
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: ${{ runner.temp }}/release/*
+
+      - name: Upload files
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-files
+          path: ${{ runner.temp }}/release/*
