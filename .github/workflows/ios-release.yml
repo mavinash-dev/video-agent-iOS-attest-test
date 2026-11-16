@@ -433,6 +433,7 @@ jobs:
       contents: write
       id-token: write
       attestations: write
+      actions: write
     env:
       VERSION: ${{ needs.version-bump.outputs.version }}
       RELEASE_BRANCH: ${{ needs.version-bump.outputs.release_branch }}
@@ -540,3 +541,6 @@ jobs:
             SHA256SUMS
             integrity-manifest.json
             build-info.json
+
+      - name: Run the release build check on the release branch head
+        run: gh workflow run release-build-check.yml --ref "$RELEASE_BRANCH"
