@@ -29,27 +29,27 @@ let package = Package(
         .binaryTarget(
             name: "NewRelicVideoCore",
             url: "\(releaseBaseURL)/\(releaseTag)/NewRelicVideoCore.xcframework.zip",
-            checksum: "833c76f60f22d9db7ef82604840d68c1d7cd486e5bc3c61080028e728938d086"
+            checksum: "a0b7d2c5334febcaff686f1f6f52063e0157b71ae3cecd335b350c641ce239b9"
         ),
         .binaryTarget(
             name: "NRAVPlayerTracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRAVPlayerTracker.xcframework.zip",
-            checksum: "869068f5d15fccdf5c73a230591c690ed84fe080e49b054cba3d8bdb51d39cbc"
+            checksum: "e39430c65dd63f627a057412541533e9b7dd0f0e3a94d423095cf4fca497d780"
         ),
         .binaryTarget(
             name: "NRIMATracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRIMATracker.xcframework.zip",
-            checksum: "91bc79066f89c9a5efa3581f25609b13e108c8dfccd70a7e0505d7909acd9bf1"
+            checksum: "ad0849c745d36098f083881a264780bca8054b5395cddb7fd01806e61c792caf"
         ),
         .binaryTarget(
             name: "NRMediaTailorTracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRMediaTailorTracker.xcframework.zip",
-            checksum: "f8a3fe567affaeae637f1fcfa60915ea07e4bfd0076d8d3a31ed69829ca05304"
+            checksum: "c9f00b1bdc444fcaa7746f0f631d0c7ee039ef35ed968ebaa56a0a1c6f50e66b"
         ),
         .binaryTarget(
             name: "NRTHEOplayerTracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRTHEOplayerTracker.xcframework.zip",
-            checksum: "f61a5ef5503e913c55b85f5212a81f3900eaa5bde9e6978df1a4aeb101361604"
+            checksum: "3a4d3c38bb1e51eeaa4edd583a490ffb57ed022dd6aeadbd1423300447f3234e"
         ),
     ]
 )
