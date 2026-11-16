@@ -1,3 +1,5 @@
+## [5.1.4](https://github.com/mavinash-dev/video-agent-iOS-attest-test/compare/v5.1.1...v5.1.4) (2026-11-16)
+
 ## [5.1.0](https://github.com/newrelic/video-agent-iOS/compare/v5.0.0...v5.1.0) (2026-10-15)
 
 ### Notes
