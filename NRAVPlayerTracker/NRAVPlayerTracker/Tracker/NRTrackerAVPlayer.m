@@ -422,7 +422,7 @@
 
 
 - (NSString *)getTrackerVersion {
-    return @"5.1.1";
+    return @"5.1.2";
 }
 
 - (NSString *)getPlayerVersion {

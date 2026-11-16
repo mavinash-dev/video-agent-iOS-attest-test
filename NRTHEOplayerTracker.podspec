@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'NRTHEOplayerTracker'
-  s.version          = '5.1.1'
+  s.version          = '5.1.2'
   s.summary          = 'New Relic Video Agent, THEOplayer Tracker.'
 
   s.description      = <<-DESC
