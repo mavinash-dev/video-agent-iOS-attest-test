@@ -12,7 +12,7 @@ import PackageDescription
 // a consumer building below iOS 15 who imports NRTHEOplayerTracker will hit a real deployment-target
 // error from Xcode at link time, not from SPM resolution. Not a bug in this file - same limitation
 // CocoaPods callers avoid only because the podspec can declare its own floor.
-let releaseTag = "v5.1.1"
+let releaseTag = "v5.1.2"
 let releaseBaseURL = "https://github.com/newrelic/video-agent-iOS/releases/download"
 
 let package = Package(
@@ -29,27 +29,27 @@ let package = Package(
         .binaryTarget(
             name: "NewRelicVideoCore",
             url: "\(releaseBaseURL)/\(releaseTag)/NewRelicVideoCore.xcframework.zip",
-            checksum: "d980d3349d6a3faacc7a8f5e71246ff77014e5111518d1a49750e67dd4ccbe31"
+            checksum: "9f4e275d71385432c5653e8a7223e8f21a3504cd02b1273820c387d5a9292e66"
         ),
         .binaryTarget(
             name: "NRAVPlayerTracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRAVPlayerTracker.xcframework.zip",
-            checksum: "8bfb20ccd6edf80d3fcc86bf82f8f59fbda3831ed547e632a98aa0cfb44acc28"
+            checksum: "59a2be2810f426e9ab1861d6fc854d66d96b0613c208580bf44ee790780c42a5"
         ),
         .binaryTarget(
             name: "NRIMATracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRIMATracker.xcframework.zip",
-            checksum: "aeb8a0b793a14f70fa0d417cf110008297644967aa4a8221207e94b3f15dc414"
+            checksum: "30f12006a4dd22016d3cd0d1ad92b7cfe409ef869ee0b0b8e1649c5d0c37eb96"
         ),
         .binaryTarget(
             name: "NRMediaTailorTracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRMediaTailorTracker.xcframework.zip",
-            checksum: "194f02d74fff621e7ba4e44d06b1cc1c4c4309795f1f989da25e60e26ffbacd2"
+            checksum: "9c8a04fbe073fb2a91527ceb95b993d999d0ff90508b101afe8aad5b0dd3a3b0"
         ),
         .binaryTarget(
             name: "NRTHEOplayerTracker",
             url: "\(releaseBaseURL)/\(releaseTag)/NRTHEOplayerTracker.xcframework.zip",
-            checksum: "fe29361ba0f3b5fe76d5ec2124fd4bc5f34023ab2f1946142b1042bf53806989"
+            checksum: "151233b415854300300796d7801c7e103caf640ec273066f7a196d350ea63174"
         ),
     ]
 )
