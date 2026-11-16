@@ -1,0 +1,73 @@
+name: Reproducibility test
+
+on:
+  push:
+    branches: [repro-test]
+
+permissions:
+  contents: read
+
+jobs:
+  build1:
+    runs-on: macos-latest
+    outputs:
+      zips: ${{ steps.h.outputs.zips }}
+      content: ${{ steps.h.outputs.content }}
+      xcode: ${{ steps.h.outputs.xcode }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build XCFrameworks
+        run: |
+          chmod +x ./build-xcframeworks.sh
+          ./build-xcframeworks.sh
+      - name: Hash the zips and what is inside them
+        id: h
+        run: |
+          Z="xcframeworks.zip NewRelicVideoCore.xcframework.zip NRAVPlayerTracker.xcframework.zip NRIMATracker.xcframework.zip NRMediaTailorTracker.xcframework.zip NRTHEOplayerTracker.xcframework.zip"
+          { echo "zips<<EOF"; shasum -a 256 $Z; echo "EOF"; } >> "$GITHUB_OUTPUT"
+          rm -rf "$RUNNER_TEMP/x"; mkdir "$RUNNER_TEMP/x"
+          for z in $Z; do mkdir "$RUNNER_TEMP/x/$z"; unzip -q "$z" -d "$RUNNER_TEMP/x/$z"; done
+          { echo "content<<EOF"; (cd "$RUNNER_TEMP/x" && for z in $Z; do echo "$z $(cd $z && find . -type f | sort | xargs shasum -a 256 | shasum -a 256 | cut -c1-16)"; done); echo "EOF"; } >> "$GITHUB_OUTPUT"
+          echo "xcode=$(xcodebuild -version | tr '\n' ' ') runner=$ImageVersion" >> "$GITHUB_OUTPUT"
+
+  build2:
+    runs-on: macos-latest
+    outputs:
+      zips: ${{ steps.h.outputs.zips }}
+      content: ${{ steps.h.outputs.content }}
+      xcode: ${{ steps.h.outputs.xcode }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build XCFrameworks
+        run: |
+          chmod +x ./build-xcframeworks.sh
+          ./build-xcframeworks.sh
+      - name: Hash the zips and what is inside them
+        id: h
+        run: |
+          Z="xcframeworks.zip NewRelicVideoCore.xcframework.zip NRAVPlayerTracker.xcframework.zip NRIMATracker.xcframework.zip NRMediaTailorTracker.xcframework.zip NRTHEOplayerTracker.xcframework.zip"
+          { echo "zips<<EOF"; shasum -a 256 $Z; echo "EOF"; } >> "$GITHUB_OUTPUT"
+          rm -rf "$RUNNER_TEMP/x"; mkdir "$RUNNER_TEMP/x"
+          for z in $Z; do mkdir "$RUNNER_TEMP/x/$z"; unzip -q "$z" -d "$RUNNER_TEMP/x/$z"; done
+          { echo "content<<EOF"; (cd "$RUNNER_TEMP/x" && for z in $Z; do echo "$z $(cd $z && find . -type f | sort | xargs shasum -a 256 | shasum -a 256 | cut -c1-16)"; done); echo "EOF"; } >> "$GITHUB_OUTPUT"
+          echo "xcode=$(xcodebuild -version | tr '\n' ' ') runner=$ImageVersion" >> "$GITHUB_OUTPUT"
+
+  compare:
+    needs: [build1, build2]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare the two builds
+        env:
+          Z1: ${{ needs.build1.outputs.zips }}
+          Z2: ${{ needs.build2.outputs.zips }}
+          C1: ${{ needs.build1.outputs.content }}
+          C2: ${{ needs.build2.outputs.content }}
+          X1: ${{ needs.build1.outputs.xcode }}
+          X2: ${{ needs.build2.outputs.xcode }}
+        run: |
+          echo "build1: $X1"; echo "build2: $X2"
+          echo "--- zip checksums build1"; echo "$Z1"; echo "--- zip checksums build2"; echo "$Z2"
+          echo "--- content hashes build1"; echo "$C1"; echo "--- content hashes build2"; echo "$C2"
+          if [ "$Z1" = "$Z2" ]; then echo "RESULT: zips identical"; else echo "RESULT: zips differ"; fi
+          if [ "$C1" = "$C2" ]; then echo "RESULT: contents identical"; else echo "RESULT: contents differ"; fi
+          [ "$Z1" = "$Z2" ]
